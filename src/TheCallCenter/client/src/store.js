@@ -21,6 +21,9 @@ export default new Vuex.Store({
     },
     removeCall(state, call) {
       state.calls = state.calls.filter(function (c) { return c !== call; });
+    },
+    addCall(state, call) {
+      state.calls.push(call);
     }
   },
   actions: {

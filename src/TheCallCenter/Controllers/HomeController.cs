@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using TheCallCenter.Data;
 using TheCallCenter.Data.Entities;
+using TheCallCenter.Hubs;
 using TheCallCenter.Models;
 
 namespace TheCallCenter.Controllers
@@ -13,10 +15,12 @@ namespace TheCallCenter.Controllers
   public class HomeController : Controller
   {
     private readonly CallCenterContext _ctx;
+    private readonly IHubContext<CallHub, ICallHub> _hubContext;
 
-    public HomeController(CallCenterContext ctx)
+    public HomeController(CallCenterContext ctx, IHubContext<CallHub, ICallHub> hubContext)
     {
       _ctx = ctx;
+      _hubContext = hubContext;
     }
 
     public IActionResult Index()
@@ -37,6 +41,7 @@ namespace TheCallCenter.Controllers
           {
             ViewBag.Message = "Problem Reported...";
             ModelState.Clear();
+            await _hubContext.Clients.All.NewCall(model);
           }
           else
           {

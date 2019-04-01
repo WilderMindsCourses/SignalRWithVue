@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheCallCenter.Data;
+using TheCallCenter.Hubs;
 
 namespace TheCallCenter
 {
@@ -34,8 +35,13 @@ namespace TheCallCenter
         options.MinimumSameSitePolicy = SameSiteMode.None;
       });
 
-
       services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      services.AddSignalR(opt =>
+      {
+        opt.EnableDetailedErrors = true;
+      });
+
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +58,11 @@ namespace TheCallCenter
 
       app.UseStaticFiles();
       app.UseCookiePolicy();
+
+      app.UseSignalR(routes =>
+      {
+        routes.MapHub<CallHub>("/api/call-hub");
+      });
 
       app.UseMvc(routes =>
       {
